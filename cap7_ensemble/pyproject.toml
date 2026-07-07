@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ensemble-detector"
+version = "0.1.0"
+description = "Two-level ensemble anomaly detection for industrial pump monitoring"
+requires-python = ">=3.10"
+dependencies = [
+    "torch>=2.0.0",
+    "pytorch-lightning>=2.0.0",
+    "pandas>=2.0.0",
+    "numpy>=1.24.0",
+    "scipy>=1.10.0",
+    "rich>=13.0.0",
+    "plotly>=5.0.0",
+    "dash>=2.14.0",
+    "dash-bootstrap-components>=1.5.0",
+    "matplotlib>=3.7.0",
+    "cond-reg-v2",
+    "cond-reg",
+    "pyarrow>=24.0.0",
+]
+
+[tool.uv.sources]
+cond-reg-v2 = { path = "./cond_reg_v2" }
+cond-reg = { path = "../cond_reg" }
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+]
+
+[project.scripts]
+ensemble-inference = "model.inference:main"
+ensemble-dashboard = "dashboard:main"
+ensemble-monitor = "model.monitoring:cli_main"
+demo-streaming = "demos.streaming_demo:main"
+demo-plotting = "demos.plotting_demo:main"
+demo-comparison-plot = "demos.comparison_plotting_demo:main"
+demo-comparison-stream = "demos.comparison_streaming_demo:main"
+demo-batch-eval = "demos.batch_evaluate:main"
+demo-report = "demos.report_generator:main"
+
+[tool.setuptools.packages.find]
+include = ["model*", "demos*"]

@@ -1,0 +1,194 @@
+# HTF Pump Classification Configuration
+# 4 Main HTF pumps, 5-minute sampling interval
+# 18 source columns -> exclude pump_id (index 1) -> 17 clean columns
+
+system_name: htf_pumps
+data_root: ../new_data
+output_dir: ../
+
+file_pattern: "^pump_(\\d+)_(\\d{4}-\\d{2}-\\d{2})(?:_\\d{2}_\\d{2}-\\d{2}_\\d{2})?\\.csv$"
+date_format: "%Y-%m-%d"
+pump_ids: [1, 2, 3, 4]
+custom_detectors_dir: ../pipeline/custom_detectors
+
+columns:
+  expected_source_count: 18
+  exclude_indices: [1]
+  clean_names:
+    - timestamp
+    - ambient_temp
+    - speed
+    - inlet_temp
+    - motor_current
+    - flow
+    - outlet_pressure
+    - nde_outboard_temp
+    - nde_inboard_temp
+    - de_bearing_temp
+    - motor_bearing_temp_1
+    - motor_bearing_temp_2
+    - motor_u_winding_temp_1
+    - motor_u_winding_temp_2
+    - motor_u_winding_temp_3
+    - de_vibration
+    - nde_vibration
+
+  timestamp_col: timestamp
+  speed_col: speed
+  current_col: motor_current
+  pressure_col: outlet_pressure
+
+  temp_cols:
+    - nde_outboard_temp
+    - nde_inboard_temp
+    - de_bearing_temp
+    - motor_bearing_temp_1
+    - motor_bearing_temp_2
+    - motor_u_winding_temp_1
+    - motor_u_winding_temp_2
+    - motor_u_winding_temp_3
+    - inlet_temp
+    - ambient_temp
+
+  baseline_extra_cols:
+    - flow
+    - outlet_pressure
+
+  prox_cols:
+    - de_vibration
+    - nde_vibration
+
+thresholds:
+  min_period_duration: 900
+  speed_on_threshold: 500.0
+  gap_merge_threshold: 600
+  ramp_exclude_seconds: 300
+  anomaly_sigma: 3.0
+  vibration_spike_factor: 2.0
+  pressure_off_absolute_threshold: 10.0
+  pressure_off_rebound_threshold: 8.0
+  pressure_off_extended_sigma: 2.5
+  off_state_sigma: 4.0
+  frozen_sensor_std_threshold: 0.01
+  frozen_sensor_min_samples: 5
+  outlet_pressure_variability_cap: 5.0
+  min_detectors_for_abnormal: 2
+  absolute_temp_limits:
+    nde_outboard_temp: 95
+    nde_inboard_temp: 95
+    de_bearing_temp: 95
+    motor_bearing_temp_1: 80
+    motor_bearing_temp_2: 80
+    motor_u_winding_temp_1: 120
+    motor_u_winding_temp_2: 120
+    motor_u_winding_temp_3: 120
+
+detectors:
+  - speed_stability
+  - current_speed_ratio
+  - temperatures
+  - vibration
+  - outlet_pressure
+  - flow_anomaly
+  - winding_temp_imbalance
+  - temp_absolute_limit
+  - ml_ensemble
+
+examples:
+  normal:
+    - date: "2025-06-26"
+      pump: 1
+    - date: "2025-07-02"
+      pump: 2
+    - date: "2025-04-20"
+      pump: 3
+    - date: "2025-07-18"
+      pump: 4
+  abnormal:
+    - date: "2025-04-26"
+      pump: 1
+    - date: "2025-05-15"
+      pump: 2
+    - date: "2025-05-11"
+      pump: 3
+    - date: "2025-04-06"
+      pump: 4
+
+data_selector:
+  min_normal_duration_minutes: 60
+  max_periods_per_day: 3
+  train_output: ../data/inference_data/train
+  test_output: ../data/inference_data/test
+
+quality:
+  timestep_seconds: 300
+  speed_on_threshold: 500.0
+  min_consecutive_operational: 3
+
+  sensors:
+    speed:
+      min_value: 0
+      max_value: 2400
+      check_constant: true
+      check_falldown: true
+    outlet_pressure:
+      min_value: 0
+      max_value: 30
+      check_constant: true
+      check_falldown: true
+    motor_current:
+      min_value: 0
+      max_value: 200
+      check_constant: false
+      check_falldown: true
+    flow:
+      min_value: 0
+      max_value: 700
+      check_constant: true
+      check_falldown: true
+    motor_u_winding_temp_1:
+      min_value: 0
+      max_value: 180
+      check_constant: false
+      check_falldown: false
+    motor_u_winding_temp_2:
+      min_value: 0
+      max_value: 180
+      check_constant: false
+      check_falldown: false
+    motor_u_winding_temp_3:
+      min_value: 0
+      max_value: 180
+      check_constant: false
+      check_falldown: false
+    de_bearing_temp:
+      min_value: 0
+      max_value: 150
+      check_constant: true
+      check_falldown: false
+    nde_inboard_temp:
+      min_value: 0
+      max_value: 150
+      check_constant: true
+      check_falldown: false
+
+  frozen_tolerance: 1.0e-6
+  frozen_period_seconds: 3600
+  variability_threshold: 0.15
+  rolling_window_samples: 6
+  rolling_min_periods: 3
+
+  sentinel_value: 246.0
+  sentinel_column_threshold: 10
+
+  cleaning:
+    codes_to_nan: [3, 4, 5]
+    drop_quality_columns: true
+
+  resample:
+    target_interval: "5min"
+    value_agg: "mean"
+    quality_agg: "max"
+
+  output_dir: "data/cleaned"
+  dashboard_output: "quality/quality_dashboard.html"

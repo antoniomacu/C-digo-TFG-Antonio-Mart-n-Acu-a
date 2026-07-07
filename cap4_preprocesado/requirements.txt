@@ -1,0 +1,7 @@
+sqlalchemy
+psycopg2-binary
+pandas
+numpy
+click
+rich
+python-dotenv
