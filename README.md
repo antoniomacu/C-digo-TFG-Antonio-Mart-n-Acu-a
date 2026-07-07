@@ -1,6 +1,6 @@
 # Código del Trabajo de Fin de Grado
 
-**Título:** Sistema de Detección de Anomalías en Bombas HTF de Plantas CSP mediante Aprendizaje Automático No Supervisado  
+**Título:** Mantenimiento predictivo de equipos rotativos mediante técnicas de Machine Learning  
 **Autor:** Antonio Martín Acuña  
 **Grado:** Ingeniería de Tecnologías Industriales — Universidad Loyola Andalucía  
 **Curso:** 2025–2026
