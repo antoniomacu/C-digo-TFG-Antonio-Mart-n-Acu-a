@@ -211,18 +211,6 @@ Integración del Nivel 1 (CVAE condicional, `cap5_modelo_cvae/nivel_1`) y el Niv
 | `monitoring.py` | Monitorización continua: gestión de alarmas activas, persistencia de estado y lógica anti-flicker |
 | `inference.py` | Punto de entrada unificado para inferencia batch y streaming |
 
-**`demos/` — Evaluación y demostración**
-
-| Archivo | Descripción |
-|---------|-------------|
-| `streaming_demo.py` | Demo de inferencia en streaming sobre datos históricos (simula llegada de datos en tiempo real) |
-| `comparison_streaming_demo.py` | Demo comparativo: puntuaciones de Nivel 1 y Nivel 2 simultáneamente |
-| `plotting_demo.py` | Generación de figuras de la tesis: puntuaciones de anomalía con anotación de eventos conocidos |
-| `batch_evaluate.py` | Evaluación batch sobre el conjunto de test: métricas agregadas por bomba y período |
-| `calibrate_thresholds.py` | Re-calibración de umbrales del ensemble sobre datos recientes |
-| `report_generator.py` | Generación automática de informes PDF de rendimiento del sistema |
-| `cond_reg_v1_bridge.py` | Adaptador de compatibilidad con versiones anteriores del Nivel 1 |
-
 **`experiments/` — Experimentos de ablación y calibración**
 
 Experimentos numerados que corresponden a decisiones de diseño descritas en el Capítulo 7.
